@@ -13,14 +13,14 @@ import os
 
 dir = os.path.dirname(__file__)
 
-def load_file():
-    return "Load file"
+def load_file(c):
+    return np.loadtxt(c,dtype=int,delimiter=',',skiprows=1)
 
 
 if __name__ == '__main__':
-
-    print load_file()
-
+    filename = os.path.join(dir,'data/classification_dataset_training.csv')
+    matrice=load_file(filename)#matrice with 5000 rows and 52 columns
+    print(matrice[0][51])
     print rg.test_regression()
 
     print cl.test_classification()
