@@ -13,8 +13,8 @@ import os
 
 dir = os.path.dirname(__file__)
 
-def load_file(c):
-    return np.loadtxt(c,dtype=int,delimiter=',',skiprows=1)
+def load_file(filename):
+    return np.loadtxt(filename,dtype=int,delimiter=',',skiprows=1)
 
 
 if __name__ == '__main__':
