@@ -7,3 +7,4 @@
 
 # ignore les fichiers compilés
 *.pyc
+*.pdf
