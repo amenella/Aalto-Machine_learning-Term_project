@@ -1,0 +1,6 @@
+# ignore les dossiers suivants
+/data
+
+# ignore tous les fichiers/dossiers caches sauf .gitignore
+.*
+!/.gitignore
