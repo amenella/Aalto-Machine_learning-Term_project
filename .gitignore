@@ -4,3 +4,6 @@
 # ignore tous les fichiers/dossiers caches sauf .gitignore
 .*
 !/.gitignore
+
+# ignore les fichiers compilés
+*.pyc
