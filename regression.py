@@ -11,14 +11,14 @@ def insert_first_column(array, value):
     array = np.insert(array, 0, value, axis=1)
     return array
 
-def extract_xy(data):
+def extract_xy(data,target):
 
     col_nb = len(data[0][:])
     # line_nb = len(data[:])
 
     x = np.delete(data, col_nb - 1, 1)
 
-    x = delete_id_column(x)
+    #x = delete_id_column(x)
 
     #  insert 1 column of 1 at the beginning of x
     x = insert_first_column(x, 1)
@@ -31,10 +31,10 @@ def extract_xy(data):
     return (x, y)
 
 
-def compute_regression_coeff(data):
-
-    x, y = extract_xy(data)
-
+def compute_regression_coeff(data,target):
+    x = insert_first_column(data, 1)
+    #x, y = extract_xy(data,target)
+    y=target
     xT =  np.transpose(x)
     xT_x = np.dot(xT, x)
     xT_x_inversed = np.linalg.inv(xT_x)
@@ -56,29 +56,27 @@ def linear_regression(beta, x):
     return output_data
 
 
-def test_regression(training_data, testing_data, testing_data_solutions):
+def test_regression(training_data, testing_data, testing_data_solutions,target):
 
-    print "Test regression"
+    #print "Test regression"
 
 
     # delete id column
-    testing_data = delete_id_column(testing_data)
+    #testing_data = delete_id_column(testing_data)
     testing_data_solutions = delete_id_column(testing_data_solutions)
 
     #  insert 1 column of 1 at the beginning of the testing_data array
     testing_data = insert_first_column(testing_data, 1)
 
     # compute regression coefficients for the training data
-    beta = compute_regression_coeff(training_data)
+    beta = compute_regression_coeff(training_data,target)
 
     # do linear regression :
     # with the computed regression coefficients from the training data
     # on the testing data
     computed_testing_data = linear_regression(beta, testing_data)
 
-    print computed_testing_data
-
+    #print computed_testing_data
     mse = metrics.mean_squared_error(testing_data_solutions, computed_testing_data)
-    print "Mean squared error :", mse
+    return mse
 
-    return "Done"
