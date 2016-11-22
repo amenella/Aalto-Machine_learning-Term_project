@@ -13,17 +13,36 @@ import classification as cl
 import os
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.feature_selection import VarianceThreshold
-from sklearn.feature_selection import SelectKBest, chi2
-from sklearn.feature_selection import SelectKBest, f_regression
+from sklearn.feature_selection import SelectKBest, f_regression, chi2
 from sklearn.preprocessing import StandardScaler
 from sklearn import metrics
-from sklearn.neural_network import MLPClassifier
+# from sklearn.neural_network import MLPClassifier
 
 
 dir = os.path.dirname(__file__)
 
 def load_file(filename):
     return np.loadtxt(filename,dtype=int,delimiter=',',skiprows=1)
+
+
+def plot_errors(figure_fname, x_label, y_label, mse_value, nb_features):
+
+
+
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+
+    ax.scatter(nb_features, mse_value, c='r', alpha=0.5)
+    # ax.scatter(average_degrees, second_largest_components, c='g', alpha=0.5, label="Second largest CC")
+
+    ax.set_xlabel(x_label)
+    ax.set_ylabel(y_label)
+
+    # ax.legend(loc=2)
+
+    fig.savefig(figure_fname, ftype='pdf')
+
 
 
 if __name__ == '__main__':
@@ -38,11 +57,17 @@ if __name__ == '__main__':
     regression_training = load_file(regression_training_file) # matrice with 5000 rows and 52 columns
     regression_testing = load_file(regression_testing_file) # matrice with 5000 rows and 52 columns
     regression_testing_solution = load_file(regression_testing_solution_file)  # matrice with 5000 rows and 52 columns
+
+
     sol = np.delete(regression_testing_solution,0,1)
+
     test_feature = regression_testing[0:1000, 1:51]
+
     features = regression_training[0:5000, 1:51]
     #features = StandardScaler().fit_transform(features)
+
     target = regression_training[0:5000, 51]
+
     sol = regression_testing_solution[0:1000,1]
 
     # FEATURE SELECTION
@@ -51,7 +76,28 @@ if __name__ == '__main__':
     mse_min=10
     mse_ridge_min=10
 
-    for K_Best in range(2, 51):
+
+
+    figure_fname = 'Mean square errors in function of nb of selected features'
+    x_label = 'Nb of features'
+    y_label = 'MSE'
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+
+
+    # ax.scatter(average_degrees, second_largest_components, c='g', alpha=0.5, label="Second largest CC")
+
+
+
+    all_mse=list()
+    all_min_mse=list()
+    all_k_best=list()
+    all_min_k_best=list()
+
+    all_mser = list()
+
+    for K_Best in range(7, 51):
         freg = SelectKBest(f_regression,k=K_Best)
         X_train = freg.fit_transform(features, target)
         a = freg.get_support(indices=True)
@@ -60,9 +106,17 @@ if __name__ == '__main__':
         #LINEAR REGRESSION
         mse=rg.test_regression(X_train,test2Dfs, regression_testing_solution,target)
 
+        all_mse.append(mse)
+        all_k_best.append(K_Best)
+
         if mse_min > mse:
+            all_min_mse.append(mse)
+            all_min_k_best.append(K_Best)
             best_number_features_linear_regression= K_Best
             mse_min = mse
+
+
+
         #RIDGE REGRESSION
         #we test for different alpha which represent complexity penalizer to avoid everfitting(draw a graph in function of alpha for the best number of features)
         alpha_ridge = [0.003,0.0025,0.0024,0.0023,0.0022,0.0021,0.002,0.001,0.0001,0.00001]
@@ -71,6 +125,8 @@ if __name__ == '__main__':
             clf.fit(X_train,target)
             y_pred = clf.predict(test2Dfs)
             mser = metrics.mean_squared_error(sol,y_pred)
+
+            all_mser.append(mser)
             if mse_ridge_min > mser:
                 best_number_features_ridge_regression = K_Best
                 mse_ridge_min = mser
@@ -86,6 +142,17 @@ if __name__ == '__main__':
     # y_pred = clf.predict(test2Dfs)
 
 
+    ax.plot(all_k_best, all_mse, c='r', label="linear regression")
+    # ax.plot(alpha_ridge, all_mser, c='b', label="ridge regression")
+    # ax.scatter(all_min_k_best, all_min_mse, c='r')
+    ax.set_xlabel(x_label)
+    ax.set_ylabel(y_label)
+
+    # ax.legend(loc=2)
+
+    fig.savefig(figure_fname, ftype='pdf')
+
+    plt.show()
 
 
     # freg = SelectKBest(f_regression, k=10)
@@ -111,6 +178,10 @@ if __name__ == '__main__':
     print("le nombre de feature est :" + str(best_number_features_linear_regression))
     print("Pour la ridge regression la mse est:" + str(mse_ridge_min)+"avec alpha="+str(alpha))
     print("le nombre de feature est :" + str(best_number_features_ridge_regression))
+
+
+
+
     ###############################################################################
     # CLASSIFICATION
     #path of file

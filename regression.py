@@ -2,6 +2,7 @@
 
 from sklearn import metrics
 import numpy as np
+import matplotlib.pyplot as plt
 
 def delete_id_column(x):
     x = np.delete(x, 0, 1)
@@ -54,6 +55,7 @@ def linear_regression(beta, x):
         output_data.append(computed_y)
 
     return output_data
+
 
 
 def test_regression(training_data, testing_data, testing_data_solutions,target):
