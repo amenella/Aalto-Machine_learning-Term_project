@@ -88,10 +88,6 @@ if __name__ == '__main__':
 
 
 
-    # pipeline = Pipeline([
-    #     ('min/max scaler', MinMaxScaler(feature_range=(0.0, 1.0))),
-    #     ('neural network', Classifier(layers=[Layer("Softmax")], n_iter=25))])
-    # features=pipeline.fit(features,target)
     # freg = SelectKBest(f_regression, k=10)
     # X_train = freg.fit_transform(features, target)
     # a = freg.get_support(indices=True)
